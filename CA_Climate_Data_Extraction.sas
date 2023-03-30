@@ -30,7 +30,7 @@ Update:
 *
 *
 *
-*										Preparation
+*						Preparation
 *
 *
 *
@@ -41,19 +41,19 @@ Update:
 
 /*====================================================================================================*/
 /*
-/*										Macro
+/*						Macro
 /*
 /*====================================================================================================*/
 
 
 /*____________________________________________________________________________________________________*/
 /*
-/*										Define Macro Variable
+/*						Define Macro Variable
 /*
 /*____________________________________________________________________________________________________*/
 
 /*----------------------------------------------------------------------------------------------------*/
-/*										Date
+/*						Date
 /*----------------------------------------------------------------------------------------------------*/
 /* %let t = %sysfunc(today()); */
 /* %let yr = %sysfunc(year(&t.)); */
@@ -74,7 +74,7 @@ run;
 %let firstyr = 2005;
 
 /*----------------------------------------------------------------------------------------------------*/
-/*										Data Extraction Information
+/*						Data Extraction Information
 /*----------------------------------------------------------------------------------------------------*/
 
 %let datafirstyr_flag = dly_first_year;
@@ -91,14 +91,14 @@ run;
 %let climate_his_search = &climate_his_path.&climate_his_path_search_station.;
 
 /*----------------------------------------------------------------------------------------------------*/
-/*										Working Path
+/*						Working Path
 /*----------------------------------------------------------------------------------------------------*/
 %let path = ~/Portfolio;
 
 
 /*____________________________________________________________________________________________________*/
 /*
-/*										Macro Program
+/*						Macro Program
 /*
 /*____________________________________________________________________________________________________*/
 %include "&path/Macro Program.sas";
@@ -109,7 +109,7 @@ run;
 
 /*====================================================================================================*/
 /*
-/*										Library
+/*						Library
 /*
 /*====================================================================================================*/
 libname out "&path"; 
@@ -131,7 +131,7 @@ libname out "&path";
 *
 *
 *
-*										Web-Scraping
+*						Web-Scraping
 *
 *
 *
@@ -145,20 +145,20 @@ libname out "&path";
 
 /*====================================================================================================*/
 /*
-/*										Climate Station Inventory
+/*						Climate Station Inventory
 /*
 /*====================================================================================================*/
 
 
 /*____________________________________________________________________________________________________*/
 /*
-/*										1. Preparation
+/*						1. Preparation
 /*	Extract Climate Station Inventory list
 /*
 /*____________________________________________________________________________________________________*/
 
 /*----------------------------------------------------------------------------------------------------*/
-/*										Find "Climate Station Inventory" path & file name
+/*						Find "Climate Station Inventory" path & file name
 /*----------------------------------------------------------------------------------------------------*/
 %url_content(&climate.);
 
@@ -200,7 +200,7 @@ run;
 
 
 /*----------------------------------------------------------------------------------------------------*/
-/*										Download "Station Inventory" CSV file 
+/*						Download "Station Inventory" CSV file 
 /*----------------------------------------------------------------------------------------------------*/
 filename out "&outpath./&moredata_filename.";
 proc http url = "&moredata_filepath." out = out method = get;run;
@@ -208,7 +208,7 @@ proc http url = "&moredata_filepath." out = out method = get;run;
 
 /*____________________________________________________________________________________________________*/
 /*
-/*										2. Extraction
+/*						2. Extraction
 /*	Import "Station Inventory" CSV file 
 /*
 /*____________________________________________________________________________________________________*/
@@ -218,13 +218,13 @@ proc import datafile = "&path./&moredata_filename." out = Climate_Station dbms =
 
 /*____________________________________________________________________________________________________*/
 /*
-/*										3. Tidy Up
+/*						3. Tidy Up
 /*	Convert to Valid Variable
 /*
 /*____________________________________________________________________________________________________*/
 
 /*----------------------------------------------------------------------------------------------------*/
-/*										Get Variable List & Replace Space by _
+/*						Get Variable List & Replace Space by _
 /*----------------------------------------------------------------------------------------------------*/
 proc contents data = climate_station out = _clim_stat_var;run;
 data _clim_stat_var_rename ; set climate_station (obs = 1);  run;
@@ -240,7 +240,7 @@ call symputx('total_rename',_n_);
 run;
 
 /*----------------------------------------------------------------------------------------------------*/
-/*										Rename Variable's Name
+/*						Rename Variable's Name
 /*----------------------------------------------------------------------------------------------------*/
 %printmsg(msg = [ Climate Station : Rename Variable Name ] ,printalllog=);
 %macro rename();
@@ -259,7 +259,7 @@ run;
 %deldataset(lib = work,prefix = _);
 
 /*----------------------------------------------------------------------------------------------------*/
-/*										Output Climate Station Inventory
+/*						Output Climate Station Inventory
 /*----------------------------------------------------------------------------------------------------*/
 %SQUEEZE( DSNIN = Climate_Station, DSNOUT =out.Climate_Station, drop_in = ,RENAME_OUT_AS_IN =) ;
 
@@ -270,15 +270,15 @@ run;
 
 /*====================================================================================================*/
 /*
-/*										Climate Figure
+/*						Climate Figure
 /*
 /*====================================================================================================*/
 
 
 /*____________________________________________________________________________________________________*/
 /*
-/*										1. Preparation
-/*										   Get available Provinces for Extraction
+/*						1. Preparation
+/*						Get available Provinces for Extraction
 /*
 /*____________________________________________________________________________________________________*/
 %url_content(&climate_his.);
@@ -291,7 +291,7 @@ run;
 		);
 			
 /*----------------------------------------------------------------------------------------------------*/
-/*										Prepare Province List 
+/*						Prepare Province List 
 /*----------------------------------------------------------------------------------------------------*/
 data ck_prov 		(keep = prov_short province )
 ; 
@@ -320,7 +320,7 @@ set text ; n=1;
 run;
 
 /*----------------------------------------------------------------------------------------------------*/
-/*										Map Province short name to Climate Station table
+/*						Map Province short name to Climate Station table
 /*----------------------------------------------------------------------------------------------------*/
 %SQUEEZE( DSNIN = ck_prov, DSNOUT = ck_prov1, drop_in = Y,RENAME_OUT_AS_IN =Y ) ;
 
@@ -335,12 +335,12 @@ from climate_station a left join ck_prov b on  (		scan(a.province,1,'') = scan(b
 ;quit;
 
 /*----------------------------------------------------------------------------------------------------*/
-/*										Output Climate Station Inventory
+/*						Output Climate Station Inventory
 /*----------------------------------------------------------------------------------------------------*/
 %SQUEEZE( DSNIN = Climate_Station, DSNOUT =out.Climate_Station, drop_in = ,RENAME_OUT_AS_IN =) ;
 
 /*----------------------------------------------------------------------------------------------------*/
-/*										Select Specific Year Period ONLY
+/*						Select Specific Year Period ONLY
 /*----------------------------------------------------------------------------------------------------*/
 data climate_station; set climate_station;
 if &datafirstyr_flag. >= &firstyr. and &datalastyr_flag. <=&yr.;
@@ -369,13 +369,13 @@ data climate_station; set climate_station; if month not in (.,13) and Year <= &d
 
 /*____________________________________________________________________________________________________*/
 /*
-/*										2. Extraction
-/*										   Extract Daily Climate by Province
+/*						2. Extraction
+/*						Extract Daily Climate by Province
 /*
 /*____________________________________________________________________________________________________*/
 
 /*----------------------------------------------------------------------------------------------------*/
-/*										Checking :
+/*						Checking :
 /*	1. Number of records for extraction
 /*	2. backup dataset (with org_ prefix) whether exist
 /*		--> if yes, keep the largest backup dataset of each day ( days beforrogram run day )
@@ -535,7 +535,7 @@ options nosymbolgen noserror msglevel = i replace;
 options symbolgen serror;
 
 /*----------------------------------------------------------------------------------------------------*/
-/*										Set Station id as Macro Variable
+/*						Set Station id as Macro Variable
 /*----------------------------------------------------------------------------------------------------*/
 data _null_; set climate_station1;
 call symputx('stationid'||strip(_n_),station_id);
@@ -553,7 +553,7 @@ run;
 %printmsg(msg =  Total &total_stationrecord. record(s) will be extracted   , printalllog = , closealllog = );
 
 /*----------------------------------------------------------------------------------------------------*/
-/*										Download Data
+/*						Download Data
 /*----------------------------------------------------------------------------------------------------*/
 %macro download_dly_climate_by_prov(outlib, outtable);
 %let output = &outlib..&outtable.;
@@ -765,14 +765,14 @@ run;
 	
 %end;
 /*----------------------------------------------------------------------------------------------------*/
-/*										Squeeze Dataset
+/*						Squeeze Dataset
 /*----------------------------------------------------------------------------------------------------*/
 %SQUEEZE( DSNIN = &output., DSNOUT = &output.1, drop_in = Y,RENAME_OUT_AS_IN =Y ) ;
 
 %printmsg(msg = [ Download Daily Climate Data Finished! ], printalllog = Y , closealllog = );
 
 /*----------------------------------------------------------------------------------------------------*/
-/*										Delete Working Dataset
+/*						Delete Working Dataset
 /*----------------------------------------------------------------------------------------------------*/
 %deldataset(lib = work,prefix = climate);
 %deldataset(lib = work,prefix = _climate);
@@ -780,7 +780,7 @@ run;
 %mend;
 
 /*----------------------------------------------------------------------------------------------------*/
-/*										Run Macro Program
+/*						Run Macro Program
 /*----------------------------------------------------------------------------------------------------*/
 options nosymbolgen noserror msglevel = i replace;
 %download_dly_climate_by_prov(outlib = out, outtable = Climate_data);
