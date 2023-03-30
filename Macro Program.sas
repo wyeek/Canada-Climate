@@ -4,64 +4,7 @@
 *
 *
 *
-*										ABC
-*
-*
-*
-*
-*
-*******************************************************************************************************;
-
-
-
-
-
-/*====================================================================================================*/
-/*
-/*										abc
-/*
-/*====================================================================================================*/
-
-
-/*____________________________________________________________________________________________________*/
-/*
-/*										1. Preparation
-/*
-/*____________________________________________________________________________________________________*/
-
-/*----------------------------------------------------------------------------------------------------*/
-/*										A. 
-/*----------------------------------------------------------------------------------------------------*/
-
-*	Check: 
-*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~;
-
-
-/*____________________________________________________________________________________________________*/
-/*
-/*										2. Extraction
-/*
-/*____________________________________________________________________________________________________*/
-
-
-/*____________________________________________________________________________________________________*/
-/*
-/*										3. Tidy Up
-/*
-/*____________________________________________________________________________________________________*/
-
-
-
-
-
-
-*******************************************************************************************************;
-*
-*
-*
-*
-*
-*										Macro Program
+*						Macro Program
 *
 *
 *
@@ -71,7 +14,7 @@
 
 /*====================================================================================================*/
 /*
-/*										Error Check
+/*						Error Check
 /*	example:
 /*	%errorcheck();
 /*
@@ -90,16 +33,16 @@
 
 /*====================================================================================================*/
 /*
-/*										Print Specific Message / Dont Print any Log
+/*						Print Specific Message / Dont Print any Log
 /*	example:
 /*	%printmsg(msg = [ &i. / &total_stationid. ] , printalllog= , closealllog = );
 /*	%printmsg(msg, printalllog=Y);
 /*
 /*====================================================================================================*/
 %macro printmsg(msg=			/* Print Message */
-				, printalllog=	/* Print all Log information */
-				, closealllog =	/* Dont print any message */
-				);
+		, printalllog=	/* Print all Log information */
+		, closealllog =	/* Dont print any message */
+		);
 
 %let openlog = OPTIONS NOTES  SOURCE /*SYNTAXCHECK*/ VARLENCHK = ERROR;
 %let closelog = OPTIONS NONOTES NOSOURCE /*NOSYNTAXCHECK*/ VARLENCHK = NOWARN;
@@ -133,15 +76,15 @@
 
 /*====================================================================================================*/
 /*
-/*										Display looping status
+/*						Display looping status
 /*	example :
 /*	%loopstatus(total = 52106,inputnumber = i , msg = Download Data Process);
 /*
 /*====================================================================================================*/
-%macro loopstatus(	total			/* Number of Total Looping */
-					,inputnumber	/* Looping Number */
-					, msg			/* Print looping message */
-					);
+%macro loopstatus(total			/* Number of Total Looping */
+		 , inputnumber		/* Looping Number */
+		 , msg			/* Print looping message */
+		 );
 
 data _null_;
 div = 10;
@@ -172,15 +115,15 @@ run;
 
 /*====================================================================================================*/
 /*
-/*										Delete Specific prefix Dataset
+/*						Delete Specific prefix Dataset
 /*	example :
 /*	%deldataset(lib = work,prefix = _);
 /*
 /*====================================================================================================*/
-%macro deldataset(	lib				/* library of delete dataset */
-					, prefix		/* prefix of delete dataset */
-					, Noprint = 	/* Dont print any message */
-					);
+%macro deldataset( ib			/* library of delete dataset */
+		 , prefix		/* prefix of delete dataset */
+		 , Noprint = 		/* Dont print any message */
+		 ;
 
 %printmsg(msg = , printalllog = , closealllog = Y);
 
@@ -241,17 +184,17 @@ quit;
 
 /*====================================================================================================*/
 /*
-/*										Random Sample Check
+/*						Random Sample Check
 /*	example:
 /*	%samplecheck(table = ck_year1,samplenumber = 100 , keepvar = , selectioncriteria = , Noprint = );
 /*
 /*====================================================================================================*/
-%macro samplecheck(	table					/* Table for Sample Check */
-					, samplenumber			/* Number of sample check */
-					, keepvar				/* Keep specific variable only for Sample Check, if null, keep all variable */
-					, selectioncriteria		/* Select specific items for sample check, if null, random selection based on the whole table */
-					, Noprint				/* Dont print any message */
-					);
+%macro samplecheck(	table				/* Table for Sample Check */
+			, samplenumber			/* Number of sample check */
+			, keepvar			/* Keep specific variable only for Sample Check, if null, keep all variable */
+			, selectioncriteria		/* Select specific items for sample check, if null, random selection based on the whole table */
+			, Noprint			/* Dont print any message */
+			);
 
 %printmsg(msg = , printalllog = , closealllog = Y);
 
@@ -280,19 +223,19 @@ data Sample; set _sample (obs = &samplenumber.); drop randomnumber;run;
 
 /*====================================================================================================*/
 /*
-/*										Merge Multi Records into 1 Record
+/*						Merge Multi Records into 1 Record
 /*	example:
 /*	%mergerow(intable = a, outtable = b , mergevar = name, splitby = , newvar = b, mergeby = memname);
 /*
 /*====================================================================================================*/
 %macro mergerow(intable			/* Input Table Name */
-				, outtable		/* Output Table Name */
-				, mergevar		/* Variable of Merging Multi Records */
-				, splitby 		/* Multi Records separated by any special char, if null, will separate by space */
-				, newvar		/* Variable name of the single record */
-				, mergeby 		/* Merge the multi records by which variables */
-				, Noprint		/* Dont print any message */
-				);
+		, outtable		/* Output Table Name */
+		, mergevar		/* Variable of Merging Multi Records */
+		, splitby 		/* Multi Records separated by any special char, if null, will separate by space */
+		, newvar		/* Variable name of the single record */
+		, mergeby 		/* Merge the multi records by which variables */
+		, Noprint		/* Dont print any message */
+		);
 %printmsg(msg = , printalllog = , closealllog = Y);
 
 proc sort data = &intable. out = mr_&intable. tagsort; by &mergeby.;run;
@@ -329,23 +272,23 @@ run;
 
 /*====================================================================================================*/
 /*
-/*										Check Dataset whether exist
+/*						Check Dataset whether exist
 /*	example:
 /*	%ckdataset(lib = out, tablename = climate_data, tablenamelist = );
 /*
 /*====================================================================================================*/
 %macro ckdataset(lib 				/* Check Dataset's library */
-				, tablename			/* Check Dataset Name */
-				, tablenamelist		/* List Dataset name with special prefix */
-				, obsnum			/* Check Number of obs of Check Dataset */
-				, Noprint = 		/* Dont Print any message */
-				);
+		, tablename			/* Check Dataset Name */
+		, tablenamelist			/* List Dataset name with special prefix */
+		, obsnum			/* Check Number of obs of Check Dataset */
+		, Noprint = 			/* Dont Print any message */
+		);
 
 %printmsg(msg = , printalllog = , closealllog = Y);
 
 /*----------------------------------------------------------------------------------------------------*/
 /*
-/*										Preparation
+/*						Preparation
 /*
 /*----------------------------------------------------------------------------------------------------*/
 %global ckdatasetexist;
@@ -363,7 +306,7 @@ quit;
 
 /*----------------------------------------------------------------------------------------------------*/
 /*
-/*										If found the dataset
+/*						If found the dataset
 /*
 /*----------------------------------------------------------------------------------------------------*/
 %if &total_ckds > 0  %then %do;	
@@ -372,7 +315,7 @@ quit;
 	%let ckdatasetexist = Y;
 
 *....................................................................................................;
-*										Count number of obs
+*						Count number of obs
 *....................................................................................................;
 	
 	data _null_; set ckdataset; call symputx('ds'||strip(_n_),FullTableName); call symputx('total_ds',_n_);run;
@@ -393,7 +336,7 @@ quit;
 	%end;
 	
 *....................................................................................................;
-*										Del Table Name List if not required
+*						Del Table Name List if not required
 *....................................................................................................;
 
 	%if %length(&tablenamelist.) = 0 %then %do;
@@ -412,7 +355,7 @@ quit;
 	%end;
 	
 *....................................................................................................;
-*										Display number of obs if required
+*						Display number of obs if required
 *....................................................................................................;
 	
 	%if %length(&obsnum.) >0 %then %do;
@@ -467,14 +410,14 @@ quit;
 
 /*====================================================================================================*/
 /*
-/*										Web content extraction
+/*						Web content extraction
 /*	example :
 /*	%url_content(www.google.com);
 /*
 /*====================================================================================================*/
 %macro url_content(	url				/* URL for extraction */
-					, Noprint = 	/* Dont print any message */
-					);
+			, Noprint = 			/* Dont print any message */
+			);
 
 %printmsg(msg = , printalllog = , closealllog = Y);
 
@@ -515,7 +458,7 @@ quit;
 
 /*====================================================================================================*/
 /*
-/*										Split String by Delimiter
+/*						Split String by Delimiter
 /*	example :
 /*	%split(	  intable 			= content
 			, outtable 			= text
@@ -527,12 +470,12 @@ quit;
 			
 /*====================================================================================================*/
 %macro split(intable			/* Input table */
-			, outtable			/* Output table */
-			, split_var			/* Splitting variable */
-			, split_dlm			/* Split by specific delimiter */
-			, var_after_split	/* Variable name after splitting */
-			, Noprint =			/* Dont print any message */
-			);
+	   , outtable			/* Output table */
+	   , split_var			/* Splitting variable */
+	   , split_dlm			/* Split by specific delimiter */
+	   , var_after_split		/* Variable name after splitting */
+	   , Noprint =			/* Dont print any message */
+	   );
 
 %printmsg(msg = , printalllog = , closealllog = Y);
 
@@ -563,7 +506,7 @@ quit;
 
 /*====================================================================================================*/
 /*
-/*										Squeeze dataset
+/*						Squeeze dataset
 /*	example : 
 /*	%SQUEEZE( DSNIN = ck_currentyr, DSNOUT = ck_currentyr1, drop_in = Y, RENAME_OUT_AS_IN =Y ) ;
 /*
